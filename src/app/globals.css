@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+/* Café palette: cream, espresso, caramel, sage, berry */
+:root {
+  --bg: #f4ece1;
+  --bg-glow: #fbf6ef;
+  --surface: #fffaf3;
+  --surface-2: #f1e6d7;
+  --ink: #2a1c14;
+  --ink-soft: #6f5a4b;
+  --line: #e2d3bf;
+  --caramel: #b8692d;
+  --caramel-ink: #fffaf3;
+  --sage: #4f7550;
+  --sage-soft: #e3ecdf;
+  --berry: #b23b33;
+  --berry-soft: #f7e1dc;
+  --amber-soft: #f8e8c9;
+  --shadow: 0 1px 2px rgb(60 35 15 / 0.06), 0 8px 24px -8px rgb(60 35 15 / 0.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15100c;
+    --bg-glow: #20170f;
+    --surface: #211812;
+    --surface-2: #2b2018;
+    --ink: #f3e8da;
+    --ink-soft: #b7a28d;
+    --line: #3a2c21;
+    --caramel: #d98a49;
+    --caramel-ink: #1a120c;
+    --sage: #86b083;
+    --sage-soft: #1f2c1f;
+    --berry: #e2675d;
+    --berry-soft: #3a1d1a;
+    --amber-soft: #3a2c15;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 30px -10px rgb(0 0 0 / 0.6);
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-caramel: var(--caramel);
+  --color-caramel-ink: var(--caramel-ink);
+  --color-sage: var(--sage);
+  --color-sage-soft: var(--sage-soft);
+  --color-berry: var(--berry);
+  --color-berry-soft: var(--berry-soft);
+  --color-amber-soft: var(--amber-soft);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-fraunces);
+  --shadow-card: var(--shadow);
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 10% -10%, var(--bg-glow), transparent 60%),
+    radial-gradient(900px 500px at 110% 0%, var(--bg-glow), transparent 60%),
+    var(--bg);
+  color: var(--ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+.animate-card-in { animation: card-in 380ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+@keyframes ring {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--caramel) 45%, transparent), var(--shadow); }
+  50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--caramel) 0%, transparent), var(--shadow); }
+}
+.animate-ring { animation: ring 1.6s ease-in-out infinite; }
+
+@keyframes shimmer { to { background-position: -200% 0; } }
+.shimmer {
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--line) 50%, var(--surface-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-card-in, .animate-ring, .shimmer { animation: none; }
+}
