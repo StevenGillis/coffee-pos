@@ -98,14 +98,29 @@ export type UberOrder = Record<string, unknown>;
 export async function fetchOrderDetails(orderId: string): Promise<UberOrder | null> {
   if (uberMode() === "mock") {
     const db = await getDb();
-    const [row] = await db.query<{ payload: UberOrder }>(
+    const [row] = await db.query<{ payload: UberOrder | string }>(
       "SELECT payload FROM mock_uber_orders WHERE id = $1",
       [orderId],
     );
-    return row?.payload ?? null;
+    if (!row) return null;
+    // Rows saved before the ::text::jsonb fix hold the JSON as a single string.
+    return typeof row.payload === "string" ? (JSON.parse(row.payload) as UberOrder) : row.payload;
   }
   const res = await uberFetch(PATHS.orderDetails(orderId));
   return (await res.json()) as UberOrder;
+}
+
+/** Mock mode only: store a fake Uber order so fetchOrderDetails can return it. */
+export async function saveMockUberOrder(rawJson: string): Promise<string | null> {
+  const order = JSON.parse(rawJson) as { id?: unknown };
+  if (typeof order.id !== "string" || !order.id) return null;
+  const db = await getDb();
+  // ::text::jsonb so hosted Postgres parses the JSON instead of storing it as one string.
+  await db.query(
+    "INSERT INTO mock_uber_orders (id, payload) VALUES ($1, $2::text::jsonb) ON CONFLICT (id) DO UPDATE SET payload = EXCLUDED.payload",
+    [order.id, rawJson],
+  );
+  return order.id;
 }
 
 export async function acceptOrder(orderId: string, pickupTime: Date): Promise<void> {
