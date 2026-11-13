@@ -170,7 +170,7 @@ export async function loadOrderDetails(orderId: string): Promise<boolean> {
   const o = normaliseUberOrder(raw);
   const db = await getDb();
   await db.query(
-    `UPDATE orders SET display_id = $2, customer_name = $3, order_type = $4, items = $5::jsonb,
+    `UPDATE orders SET display_id = $2, customer_name = $3, order_type = $4, items = $5::text::jsonb,
        special_instructions = $6, placed_at = $7, ready_by = $8, details_loaded = true,
        status = CASE WHEN $9 = 'CANCELED' AND status NOT IN ('picked_up') THEN 'cancelled' ELSE status END,
        updated_at = now()
